@@ -1,13 +1,29 @@
-// Tl8qyKOu3kQ6sK65
-const { MongoClient, ServerApiVersion } = require("mongodb");
-const dbconnect = () => {
-  const uri = "mongodb+srv://pocketBazar:Tl8qyKOu3kQ6sK65@cluster0.qflry.mongodb.net/?retryWrites=true&w=majority";
-  const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
-  client.connect((err) => {
-    const collection = client.db("randomusers").collection("users");
-    // perform actions on the collection object
-    console.log("db connected");
-    client.close();
-  });
+const { MongoClient } = require("mongodb");
+const dotenv = require("dotenv");
+dotenv.config();
+
+const client = new MongoClient(process.env.ATLAS_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+});
+
+let dbConnection;
+
+module.exports = {
+  connectToServer: function (callback) {
+    client.connect(function (err, db) {
+      if (err || !db) {
+        return callback(err);
+      }
+
+      dbConnection = db.db("randomuser");
+      console.log("Successfully connected to MongoDB.");
+
+      return callback();
+    });
+  },
+
+  getDb: function () {
+    return dbConnection;
+  },
 };
-module.exports = dbconnect;

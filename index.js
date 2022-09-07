@@ -1,14 +1,16 @@
 const express = require("express");
-const randomRoute = require("./routes/random");
-const allUser = require("./routes/all");
-const dbconnect = require("./utils/dbConnect");
+const userRoute = require("./routes/user.route");
 const app = express();
 const dotenv = require("dotenv");
-const port = process.env.port || 5000;
+const { connectToServer } = require("./utils/dbConnect");
+const port = process.env.PORT || 5000;
 dotenv.config();
-dbconnect();
-app.use("/user", randomRoute);
-app.use("/user", allUser);
+app.use(express.json());
+connectToServer((err) => {
+  err ? console.log(err) : console.log(`server running at ${port}`);
+});
+
+app.use("/user", userRoute);
 
 app.get("/", (req, res) => {
   res.send("Hello World!");
@@ -16,6 +18,4 @@ app.get("/", (req, res) => {
 app.all("*", (req, res) => {
   res.send("Path not found");
 });
-app.listen(port, () => {
-  console.log("Server running");
-});
+app.listen(port);
