@@ -1,4 +1,4 @@
-// const { ObjectId } = require("mongodb");
+const { ObjectId } = require("mongodb");
 const { getDb } = require("../utils/dbConnect");
 
 module.exports.getAlluser = async (req, res) => {
@@ -18,28 +18,28 @@ module.exports.getAlluser = async (req, res) => {
 };
 module.exports.getRandomUser = async (req, res) => {
   try {
-    const random = Math.floor(Math.random() * 10);
     const db = getDb();
-    const randomUser = await db.collection("user").findOne({ id: random });
+    const randomUser = await db
+      .collection("user")
+      .aggregate([{ $sample: { size: 1 } }])
+      .toArray();
     res.send(randomUser);
-  } catch (err) {
-    console.log(err);
+  } catch (error) {
+    console.log(error);
   }
 };
 module.exports.findAuser = async (req, res) => {
   const { id } = req.params;
+  console.log(id);
   const db = getDb();
-  const user = await db
-    .collection("user")
-    .find({ id: +id })
-    .toArray();
+  const user = await db.collection("user").findOne({ id: +id });
   res.send(user);
 };
 module.exports.saveAuser = async (req, res) => {
   try {
     const db = getDb();
     const user = req.body;
-    const result = await db.collection("user").insertOne(user);
+    const result = await db.collection("user").insertMany(user);
     res.send(result);
   } catch (error) {
     console.log(error);
@@ -60,7 +60,7 @@ module.exports.bulkUpdate = async (req, res) => {
   try {
     const db = getDb();
     const { photoUrl, updatePhotoUrl } = req.body;
-    const updatedUser = db.collection("user").updateMany({ photoUrl: photoUrl }, { $set: {photoUrl:updatePhotoUrl} });
+    const updatedUser = db.collection("user").updateMany({ photoUrl: photoUrl }, { $set: { photoUrl: updatePhotoUrl } });
     res.send(updatedUser);
   } catch (error) {
     console.log(error);
