@@ -1,4 +1,4 @@
-const { ObjectId } = require("mongodb");
+const mockData = require("../MOCK_DATA.json");
 const { getDb } = require("../utils/dbConnect");
 
 module.exports.getAlluser = async (req, res) => {
@@ -30,7 +30,6 @@ module.exports.getRandomUser = async (req, res) => {
 };
 module.exports.findAuser = async (req, res) => {
   const { id } = req.params;
-  console.log(id);
   const db = getDb();
   const user = await db.collection("user").findOne({ id: +id });
   res.send(user);
@@ -59,9 +58,20 @@ module.exports.updateUser = async (req, res) => {
 module.exports.bulkUpdate = async (req, res) => {
   try {
     const db = getDb();
-    const { photoUrl, updatePhotoUrl } = req.body;
-    const updatedUser = db.collection("user").updateMany({ photoUrl: photoUrl }, { $set: { photoUrl: updatePhotoUrl } });
+    const { name } = req.body;
+    const updatedUser = db.collection("user").updateMany({ name: { $exists: true } }, { $set: { name: name } });
     res.send(updatedUser);
+  } catch (error) {
+    console.log(error);
+  }
+};
+module.exports.delete = async (req, res) => {
+  try {
+    const db = getDb();
+    const { id } = req.params;
+    console.log(id);
+    const user = await db.collection("user").deleteOne({ id: +id });
+    res.send(user);
   } catch (error) {
     console.log(error);
   }

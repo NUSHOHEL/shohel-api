@@ -13,4 +13,5 @@ router.post("/save", userController.saveAuser);
 
 router.patch("/update/:id", userController.updateUser);
 router.patch("/bulk-update", userController.bulkUpdate);
+router.patch("/delete/:id", userController.delete);
 module.exports = router;
