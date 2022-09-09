@@ -17,7 +17,11 @@ connectToServer((err) => {
 app.use("/user", userRoute);
 
 app.get("/", (req, res) => {
-  res.send("Hello World!");
+  res.send(
+   ` <marquee width='100%' direction='left' height='100px'>
+      This is a sample scrolling text that has scrolls in the upper direction.
+    </marquee>`
+  );
 });
 app.all("*", (req, res) => {
   res.send("Path not found");
